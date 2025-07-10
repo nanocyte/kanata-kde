@@ -1,0 +1,234 @@
+;; Kanata Configuration with Homerow Mods and AHK Triggers
+;; Based on user script and AI modifications
+;; Date: 2025-04-04 (Generated)
+
+(defcfg
+  process-unmapped-keys yes
+;;  process-unmapped-keys no ;; Keep this as 'no' to prevent interference with AHK
+  concurrent-tap-hold yes
+)
+
+;; Configuration variables
+(defvar
+  tap-timeout 200   ;; Time to register a tap
+  hold-timeout 250   ;; Time to trigger hold action
+  shift-timeout 180  ;; Time to trigger shift action
+)
+
+;; Homerow modifier template (Original - commented out, using tap-hold below)
+;; (deftemplate modtap (char mod)
+;;   (switch
+;;     ((key-timing 3 less-than 250)) $char break
+;;     () (tap-hold-release-timeout 200 400 $char $mod $char) break
+;;   )
+;; )
+
+
+;; Layer toggle aliases
+(defalias
+  nav-layer       (layer-toggle navigation)
+  ;; shortcuts-layer (layer-toggle shortcuts)
+  shortcuts-layer (layer-toggle shortcuts-taskbar)
+  m-nav-layer     (layer-toggle meta-nav)
+  a-nav-layer     (layer-toggle alt-nav)
+  s-nav-layer     (layer-toggle shift-nav)
+  c-nav-layer     (layer-toggle ctrl-nav)
+  func-layer      (layer-toggle func)
+  mouse-nav-layer (layer-toggle mouse-nav)  ;; New mouse navigation layer
+)
+
+;; Mouse scroll aliases
+(defalias
+  scroll-up   (mwheel-up 50 120)    ;; Mouse wheel up (50ms interval, 120 distance - one notch)
+  scroll-down (mwheel-down 50 120)  ;; Mouse wheel down (50ms interval, 120 distance - one notch)
+)
+
+;; Key behavior aliases
+(defalias
+  ;; Original homerow modifiers using tap-hold
+  a-met (tap-hold $tap-timeout $hold-timeout a lmet)
+  s-alt (tap-hold $tap-timeout $hold-timeout s lalt)
+  d-sft (tap-hold $tap-timeout $shift-timeout d lsft)
+  f-ctl (tap-hold $tap-timeout $hold-timeout f lctl)
+  j-ctl (tap-hold $tap-timeout $hold-timeout j rctl)
+  k-sft (tap-hold $tap-timeout $shift-timeout k rsft)
+  l-alt (tap-hold $tap-timeout $hold-timeout l ralt)
+  ;; ;-met (tap-hold $tap-timeout $hold-timeout ; srmet) ;; Original ; commented out
+  '-met (tap-hold $tap-timeout $hold-timeout ' rmet) ;; Using ' instead
+
+  ;; Special key combinations (Tap for key, Hold for layer)
+  esc-nav       (tap-hold $tap-timeout $hold-timeout esc @nav-layer)
+  spc-nav       (tap-hold $tap-timeout $hold-timeout spc @mouse-nav-layer)
+  shortcuts-tog (tap-hold $tap-timeout $hold-timeout ; @shortcuts-layer) ;; Semicolon key now toggles shortcuts layer
+  tab-func      (tap-hold $tap-timeout $hold-timeout tab @func-layer)
+
+  ;; Modifier Nav (Tap for key, Hold for layer)
+  m-nav (tap-hold $tap-timeout $hold-timeout z @m-nav-layer)
+  a-nav (tap-hold $tap-timeout $hold-timeout x @a-nav-layer)
+  s-nav (tap-hold $tap-timeout $hold-timeout c @s-nav-layer)
+  c-nav (tap-hold $tap-timeout $hold-timeout v @c-nav-layer)
+  g-nav (tap-hold $tap-timeout $hold-timeout g @nav-layer) ;; G key also activates nav layer
+  e-nav (tap-hold $tap-timeout $hold-timeout e @nav-layer) ;; G key also activates nav layer
+  
+  ;; Modifier Func (Tap for key, Hold for layer)
+  g-func (tap-hold $tap-timeout $hold-timeout g @func-layer)  ;; G key can also activate func layer (if base layer G is changed)
+  /-func (tap-hold $tap-timeout $hold-timeout / @func-layer) ;; Slash key activates func layer
+
+  ;; --- Aliases for AHK Triggers ---
+  ;; These map simple names to F13-F24 function keys.
+  ;; AutoHotkey will listen for these F-keys.
+  ahk_term     f13 ;; Trigger for Windows Terminal
+  ahk_chrome   f14 ;; Trigger for Chrome
+  ahk_vscode   f15 ;; Trigger for VS Code
+  ahk_cursor   f16 ;; Trigger for Cursor
+  ahk_gpt      f17 ;; Trigger for ChatGPT (App/Window)
+  ahk_claude   f18 ;; Trigger for Claude (App/Window)
+  ahk_obsidian f19 ;; Trigger for Obsidian
+  ahk_windsurf f20 ;; Trigger for Windsurf/Windscribe/Other
+  ahk_subl     f21
+  ahk_chromegpt  f22
+  ahk_todoist  f23
+  ahk_kraken   f24
+  ahk_android  C-f13
+
+  w @ahk_windsurf 
+  e @ahk_android
+  t @ahk_todoist
+  a @ahk_obsidian
+  s @ahk_term ;; shell
+  d @ahk_cursor ;; change this in ahk to open windsurf, vscode, or cursor
+  f @ahk_claude
+  g @ahk_chromegpt
+  k @ahk_kraken
+  z @ahk_subl ;; duplicate
+  x @ahk_gpt
+  c @ahk_chrome
+  v @ahk_vscode
+  b @ahk_subl
+  o @ahk_obsidian
+
+)
+
+;; Input source layout (Standard QWERTY + F keys etc.)
+(defsrc
+  esc  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12  home end  ins  del
+  grv  1    2    3    4    5    6    7    8    9    0    -    =    bspc
+  tab  q    w    e    r    t    y    u    i    o    p    [    ]    \
+  caps a    s    d    f    g    h    j    k    l    ;    '    ret
+  lsft z    x    c    v    b    n    m    ,    .    /         rsft
+  lctl lmet lalt           spc            ralt prtsc rctl pgdn up   pgup ;; Assuming prtsc is intended for rmet based on other configs? Or keep prtsc? Using prtsc as defined.
+                                                      left down rght
+)
+
+;; Base layer - Applies homerow mods and layer toggles
+(deflayer base
+  esc f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12  home end  ins  del
+  grv  1    2    3    4    5    6    7    8    9    0    -    =    bspc
+  @tab-func q    w    e    r    t    y    u    i    o    p    [    ]    \
+  @esc-nav @a-met @s-alt @d-sft @f-ctl @g-nav h    @j-ctl @k-sft @l-alt @shortcuts-tog @'-met ret ;; Caps is Caps Lock, ; toggles shortcuts
+  lsft @m-nav @a-nav @s-nav @c-nav b    n    m    ,    .    @/-func   rsft ;; Z,X,C,V are layer toggles on hold
+  lctl lmet lalt           @spc-nav       ralt prtsc rctl pgdn up   pgup ;; Spacebar is mouse-nav layer on hold
+                                                      left down rght
+)
+
+;; Navigation layer (Activated by holding Esc, Space, G)
+(deflayer navigation
+  _    f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12  home end  ins  del
+  _    C-6  C-7  C-8  C-9  C-0  _    _    _    _    home _    _    _ ;; Ctrl+Num for tabs/etc.
+  _    M-1  M-2  M-3  M-4  M-5  _    pgdn pgup M-grv _    _    _    _ ;; Some Ctrl keys, Nav, Meta+Grave
+  _    lmet lalt lsft lctl _    left down up   rght end  _    A-tab ;; Direct mods, Arrow keys, End, Alt+Tab
+  _    C-1  C-2  C-3  C-4  C-5  _    A-S-down C-pgup C-pgdn _         _ ;; Standard Ctrl shortcuts, Shift+Alt+Down, Ctrl+PgUp/Dn
+  _    _    _              _              _    _     _    _    _    _
+                                                      _    _    _
+)
+
+;; Meta-Navigation layer (Activated by holding Z)
+(deflayer meta-nav
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _    _    _    _    _    _    _    _    M-home _    _    _
+  _    _    _    _    _    _    _    M-pgdn M-pgup _    _    _    _    _
+  _    _    _    _    _    _    M-left M-down M-up M-rght M-end _    _
+  _    _    lalt lsft lctl _    _    _    C-pgup C-pgdn _         _
+  _    _    _              _              _    _     _    _    _    _
+                                                      _    _    _
+)
+
+;; Alt-Navigation layer (Activated by holding X)
+(deflayer alt-nav
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _    _    _    _    _    _    _    _    A-home _    _    _
+  _    _    _    _    _    _    _    A-pgdn A-pgup _    _    _    _    _
+  _    _    _    _    _    _    A-left A-down A-up A-rght A-end _    _
+  _    lmet _    lsft lctl _    _    _    C-pgup C-pgdn _         _ ;; Allows combining Alt (from X) with Meta, Shift, Ctrl
+  _    _    _              _              _    _     _    _    _    _
+                                                      _    _    _
+)
+
+;; Shift-Navigation layer (Activated by holding C)
+(deflayer shift-nav
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _    _    _    _    _    _    _    _    S-home _    _    _
+  _    _    _    _    _    _    _    S-pgdn S-pgup _    _    _    _    _
+  _    _    _    _    _    _    S-left S-down S-up S-rght S-end _    _
+  _    lmet lalt _    lctl _    _    _    C-pgup C-pgdn _         _ ;; Allows combining Shift (from C) with Meta, Alt, Ctrl
+  _    _    _              _              _    _     _    _    _    _
+                                                      _    _    _
+)
+
+;; Ctrl-Navigation layer (Activated by holding V)
+(deflayer ctrl-nav
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _    _    _    _    _    _    _    _    C-home _    _    _
+  _    _    _    _    _    _    _    C-pgdn C-pgup _    _    _    _    _
+  _    _    _    _    _    _    C-left C-down C-up C-rght C-end _    _
+  _    lmet lalt lsft _    _    _    _    C-pgup C-pgdn _         _ ;; Allows combining Ctrl (from V) with Meta, Alt, Shift
+  _    _    _              _              _    _     _    _    _    _
+                                                      _    _    _
+)
+
+;; Shortcuts layer - Sends F13-F20 triggers to AutoHotkey
+;; Activated by holding Semicolon (;)
+(deflayer shortcuts
+  ;; Top rows can be transparent (_) or map other shortcuts if needed
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _ ;; Map QWERTY row and ASDF row to AHK triggers (example)
+  _    q    @w   @e    r    @t   y    u    i    @o    p    _    _    _ ;; Q W E R T mapped
+  caps @a   @s   @d   @f   @g   _    _    @k    _    @shortcuts-tog _    _
+  _    @z   @x   @c   @v   @b    _    _    _    _    _         _
+  _    _    _              _              _    _     _    _    _    _
+                                                      _    _    _
+)
+
+(deflayer shortcuts-taskbar
+  ;; Top rows can be transparent (_) or map other shortcuts if needed
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _ ;; Map QWERTY row and ASDF row to AHK triggers (example)
+  _    q    @w   @e    r    @t   y    u    i    @o    p    _    _    _ ;; Q W E R T mapped
+  caps M-1   M-2   M-3   M-4   M-5   _    _    @k    _    @shortcuts-tog _    _
+  _    M-6   M-7   M-8   M-9   M-0    _    _    _    _    _         _
+  _    _    _              _              _    _     _    _    _    _
+                                                      _    _    _
+)
+
+;; Function layer (Left Hand F-Keys)
+;; Activated by holding Tab or / or G
+(deflayer func
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    f1   f2   f3   f4   _    _    _    _    _    _    _    _    _
+  _    f5   f6   f7   f8   _    _    _    _    _    _    _    _
+  _    f9   f10  f11  f12  _    _    rctl rsft ralt _         _ ;; Maps N M , to right mods if needed
+  _    _    _              _              _    _     _    _    _    _
+                                                      _    _    _
+)
+
+;; Navigation layer with mouse scrolling (Activated by holding Space)
+(deflayer mouse-nav
+  _    f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12  home end  ins  del
+  _    C-6  C-7  C-8  C-9  C-0  _    _    _    _    home _    _    _ ;; Ctrl+Num for tabs/etc.
+  _    M-1  M-2  M-3  M-4  M-5  _    @scroll-down @scroll-up M-grv _    _    _    _ ;; Mouse scroll instead of pgdn/pgup
+  _    lmet lalt lsft lctl _    left down up   rght end  _    A-tab ;; Direct mods, Arrow keys, End, Alt+Tab
+  _    C-1  C-2  C-3  C-4  C-5  _    @scroll-down C-pgup C-pgdn _         _ ;; Standard Ctrl shortcuts, Shift+Alt+Down, Ctrl+PgUp/Dn
+  _    _    _              _              _    _     _    _    _    _
+                                                      _    _    _
+)
