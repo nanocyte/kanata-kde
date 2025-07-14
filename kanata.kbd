@@ -6,13 +6,16 @@
   process-unmapped-keys yes
 ;;  process-unmapped-keys no ;; Keep this as 'no' to prevent interference with AHK
   concurrent-tap-hold yes
+  allow-hardware-repeat false  ;; Disable system key repeat
 )
 
 ;; Configuration variables
 (defvar
-  tap-timeout 200   ;; Time to register a tap
+  tap-timeout 50   ;; Time to register a tap
   hold-timeout 250   ;; Time to trigger hold action
   shift-timeout 180  ;; Time to trigger shift action
+  repeat-timeout 160  ;; Time before repeating key action
+  repeat-delay 15  ;; Delay between repeated key actions
 )
 
 ;; Homerow modifier template (Original - commented out, using tap-hold below)
@@ -42,14 +45,13 @@
   scroll-up   (mwheel-up 50 120)    ;; Mouse wheel up (50ms interval, 120 distance - one notch)
   scroll-down (mwheel-down 50 120)  ;; Mouse wheel down (50ms interval, 120 distance - one notch)
 
-  ;; Keys that should have repeat functionality (160ms delay, 30ms interval)
-  rep-bspc  (key-repeat 160 30 bspc)     ;; backspace with repeat
-  rep-del   (key-repeat 160 30 del)      ;; delete with repeat
-  rep-left  (key-repeat 160 30 left)     ;; arrow keys with repeat
-  rep-down  (key-repeat 160 30 down)
-  rep-up    (key-repeat 160 30 up)
-  rep-rght  (key-repeat 160 30 rght)
-  rep-spc   (key-repeat 300 30 spc)      ;; space with repeat for pagers
+  ;; Custom repeating keys with 160ms delay before repeat (30ms interval)
+  rep-bspc  (tap-hold 50 160 bspc (macro-repeat $repeat-delay bspc))     ;; backspace: tap=single, hold=repeat
+  rep-del   (tap-hold 50 160 del (macro-repeat $repeat-delay del))       ;; delete: tap=single, hold=repeat
+  rep-left  (tap-hold 50 160 left (macro-repeat $repeat-delay left))     ;; arrow keys: tap=single, hold=repeat
+  rep-down  (tap-hold 50 160 down (macro-repeat $repeat-delay down))
+  rep-up    (tap-hold 50 160 up (macro-repeat $repeat-delay up))
+  rep-rght  (tap-hold 50 160 rght (macro-repeat $repeat-delay rght))
 )
 
 ;; Key behavior aliases
@@ -57,10 +59,10 @@
   ;; Original homerow modifiers using tap-hold
   a-met (tap-hold $tap-timeout $hold-timeout a lmet)
   s-alt (tap-hold $tap-timeout $hold-timeout s lalt)
-  d-sft (tap-hold $tap-timeout $shift-timeout d lsft)
+  d-sft (tap-hold $shift-timeout $shift-timeout d lsft)
   f-ctl (tap-hold $tap-timeout $hold-timeout f lctl)
   j-ctl (tap-hold $tap-timeout $hold-timeout j rctl)
-  k-sft (tap-hold $tap-timeout $shift-timeout k rsft)
+  k-sft (tap-hold $shift-timeout $shift-timeout k rsft)
   l-alt (tap-hold $tap-timeout $hold-timeout l ralt)
   ;; ;-met (tap-hold $tap-timeout $hold-timeout ; srmet) ;; Original ; commented out
   '-met (tap-hold $tap-timeout $hold-timeout ' rmet) ;; Using ' instead
@@ -142,10 +144,10 @@
 
 ;; Navigation layer (Activated by holding Esc, Space, G)
 (deflayer navigation
-  _    f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12  home end  ins  del
+  _    f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12  home end  ins  @rep-del
   _    C-6  C-7  C-8  C-9  C-0  _    _    _    _    home _    _    _ ;; Ctrl+Num for tabs/etc.
   _    M-1  M-2  M-3  M-4  M-5  _    pgdn pgup M-grv _    _    _    _ ;; Some Ctrl keys, Nav, Meta+Grave
-  _    lmet lalt lsft lctl _    left down up   rght end  _    A-tab ;; Direct mods, Arrow keys, End, Alt+Tab
+  _    lmet lalt lsft lctl _    @rep-left @rep-down @rep-up @rep-rght end  _    A-tab ;; Direct mods, Arrow keys with repeat, End, Alt+Tab
   _    C-1  C-2  C-3  C-4  C-5  _    A-S-down C-pgup C-pgdn _         _ ;; Standard Ctrl shortcuts, Shift+Alt+Down, Ctrl+PgUp/Dn
   _    _    _              _              _    _     _    _    _    _
                                                       _    _    _
@@ -233,10 +235,10 @@
 
 ;; Navigation layer with mouse scrolling (Activated by holding Space)
 (deflayer mouse-nav
-  _    f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12  home end  ins  del
+  _    f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12  home end  ins  @rep-del
   _    C-6  C-7  C-8  C-9  C-0  _    _    _    _    home _    _    _ ;; Ctrl+Num for tabs/etc.
   _    M-1  M-2  M-3  M-4  M-5  _    @scroll-down @scroll-up M-grv _    _    _    _ ;; Mouse scroll instead of pgdn/pgup
-  _    lmet lalt lsft lctl _    left down up   rght end  _    A-tab ;; Direct mods, Arrow keys, End, Alt+Tab
+  _    lmet lalt lsft lctl _    @rep-left @rep-down @rep-up @rep-rght end  _    A-tab ;; Direct mods, Arrow keys with repeat, End, Alt+Tab
   _    C-1  C-2  C-3  C-4  C-5  _    @scroll-down C-pgup C-pgdn _         _ ;; Standard Ctrl shortcuts, Shift+Alt+Down, Ctrl+PgUp/Dn
   _    _    _              _              _    _     _    _    _    _
                                                       _    _    _
