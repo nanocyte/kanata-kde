@@ -41,6 +41,15 @@
 (defalias
   scroll-up   (mwheel-up 50 120)    ;; Mouse wheel up (50ms interval, 120 distance - one notch)
   scroll-down (mwheel-down 50 120)  ;; Mouse wheel down (50ms interval, 120 distance - one notch)
+
+  ;; Keys that should have repeat functionality (160ms delay, 30ms interval)
+  rep-bspc  (key-repeat 160 30 bspc)     ;; backspace with repeat
+  rep-del   (key-repeat 160 30 del)      ;; delete with repeat
+  rep-left  (key-repeat 160 30 left)     ;; arrow keys with repeat
+  rep-down  (key-repeat 160 30 down)
+  rep-up    (key-repeat 160 30 up)
+  rep-rght  (key-repeat 160 30 rght)
+  rep-spc   (key-repeat 300 30 spc)      ;; space with repeat for pagers
 )
 
 ;; Key behavior aliases
@@ -122,13 +131,13 @@
 
 ;; Base layer - Applies homerow mods and layer toggles
 (deflayer base
-  esc f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12  home end  ins  del
-  grv  1    2    3    4    5    6    7    8    9    0    -    =    bspc
+  esc f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12  home end  ins  @rep-del
+  grv  1    2    3    4    5    6    7    8    9    0    -    =    @rep-bspc
   @tab-func q    w    e    r    t    y    u    i    o    p    [    ]    \
   @esc-nav @a-met @s-alt @d-sft @f-ctl @g-nav h    @j-ctl @k-sft @l-alt @shortcuts-tog @'-met ret ;; Caps is Caps Lock, ; toggles shortcuts
   lsft @m-nav @a-nav @s-nav @c-nav b    n    m    ,    .    @/-func   rsft ;; Z,X,C,V are layer toggles on hold
-  lctl lmet lalt           @spc-nav       ralt prtsc rctl pgdn up   pgup ;; Spacebar is mouse-nav layer on hold
-                                                      left down rght
+  lctl lmet lalt           @spc-nav       ralt prtsc rctl pgdn @rep-up   pgup ;; Spacebar is mouse-nav layer on hold
+                                                      @rep-left @rep-down @rep-rght
 )
 
 ;; Navigation layer (Activated by holding Esc, Space, G)
