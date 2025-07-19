@@ -214,8 +214,8 @@
   ;; Top rows can be transparent (_) or map other shortcuts if needed
   _    _    _    _    _    _    _    _    _    _    _    _    _    _    _    _    _
   _    _    _    _    _    _    _    _    _    _    _    _    _    _ ;; Map QWERTY row and ASDF row to AHK triggers (example)
-  _    q    @w   @e    r    @t   y    u    i    @o    p    _    _    _ ;; Q W E R T mapped
-  caps M-1   M-2   M-3   M-4   M-5   _    _    @k    _    @shortcuts-tog _    _
+  _    F13    F14   F15    F16    F17   y    u    i    @o    p    _    _    _ ;; Q W E R T mapped
+  caps M-1   M-2   M-3   M-4   M-5   _    F18    F19    F20    @shortcuts-tog _    _
   _    M-6   M-7   M-8   M-9   M-0    _    _    _    _    _         _
   _    _    _              _              _    _     _    _    _    _
                                                       _    _    _
