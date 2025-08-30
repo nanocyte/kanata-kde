@@ -13,7 +13,7 @@
 (defvar
   tap-timeout 50   ;; Time to register a tap
   hold-timeout 250   ;; Time to trigger hold action
-  shift-timeout 180  ;; Time to trigger shift action
+  shift-timeout 160  ;; Time to trigger shift action
   repeat-timeout 160  ;; Time before repeating key action
   repeat-delay 15  ;; Delay between repeated key actions
 )
